@@ -1,0 +1,7 @@
+{
+  "GameOptions":{
+    "Tryings": 12,
+    "Min": 0,
+    "Max": 1000
+  }
+}
