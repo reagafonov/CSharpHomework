@@ -4,10 +4,10 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 
 
-double SumThreadList(List<double> list, uint degree)
+long SumThreadList(List<int> list, uint degree)
 {
     var i = 0;
-    var concurrentBag = new ConcurrentBag<double>();
+    var concurrentBag = new ConcurrentBag<long>();
     var groups = list.GroupBy(x => i++ % degree).Select(x=>x.ToList()).ToList();
     var tasks = groups.Select(x => new Thread(() => concurrentBag.Add(x.Sum()))).ToList();
     foreach (var task in tasks)
@@ -22,26 +22,26 @@ double SumThreadList(List<double> list, uint degree)
     return concurrentBag.Sum();
 }
 
-List<double> GenerateList(uint count)
+List<int> GenerateList(uint count)
 {
-    var data = new List<double>();
+    var data = new List<int>();
     for (int i = 0; i < count; i++)
     {
-        data.Add(Random.Shared.Next());
+        data.Add(Random.Shared.Next(-1,1));
     }
 
     return data;
 }
 
 
-double SumWithLinq(List<double> data, uint degree)
+long SumWithLinq(List<int> data, uint degree)
 {
     return data.AsParallel().WithDegreeOfParallelism((int)degree).Sum();
 }
 
-double SumSimple(List<double> data)
+long SumSimple(List<int> data)
 {
-    double resut = 0;
+    long resut = 0;
     foreach (var element in data)
     {
         resut += element;
@@ -52,16 +52,18 @@ double SumSimple(List<double> data)
 
 void CountThreadElements(uint count)
 {
-    var degree = 3u;
+    var degree = 5u;
     var data = GenerateList(count);
     var stopwatch = new Stopwatch();
     stopwatch.Start();
     SumSimple(data);
     stopwatch.Stop();
     Console.WriteLine($"Simple:{count}-{stopwatch.Elapsed}");
+    stopwatch.Reset();
     stopwatch.Start();
     var result = SumThreadList(data, degree);
     stopwatch.Stop();
+    stopwatch.Reset();
     Console.WriteLine($"Thread:{count}-{stopwatch.Elapsed}");
     stopwatch.Start();
     var result2 = SumWithLinq(data,degree);
