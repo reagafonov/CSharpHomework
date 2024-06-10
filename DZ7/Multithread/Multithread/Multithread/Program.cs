@@ -7,9 +7,21 @@ using System.Diagnostics;
 long SumThreadList(List<int> list, uint degree)
 {
     var i = 0;
-    var concurrentBag = new ConcurrentBag<long>();
-    var groups = list.GroupBy(x => i++ % degree).Select(x=>x.ToList()).ToList();
-    var tasks = groups.Select(x => new Thread(() => concurrentBag.Add(x.Sum()))).ToList();
+    var maxDegree = (int)degree;
+    var resultList = Enumerable.Range(0,maxDegree).Select(x=>0).ToArray();
+    var j = 0;
+    var length = (int)(list.Count/ degree);
+    
+    var tasks = Enumerable.Range(0,maxDegree).Select(x => new Thread(() =>
+    {
+        var z = x;
+        var min =(int)( z * degree);
+        var max = (int)((z + 1) * degree);
+        if (z == degree - 1)
+            max = length;
+        for(var i=min;i<max;i++)
+            resultList[z] += list[i];
+    })).ToList();
     foreach (var task in tasks)
     {
         task.Start();
@@ -19,7 +31,7 @@ long SumThreadList(List<int> list, uint degree)
         task.Join();
     }
 
-    return concurrentBag.Sum();
+    return resultList.Sum();
 }
 
 List<int> GenerateList(uint count)
@@ -48,31 +60,40 @@ long SumSimple(List<int> data)
     }
 
     return resut;
-};
+}
+
+void CheckTime(uint count, Action action, string name)
+{
+    var stopwatch = new Stopwatch();
+    long ticks = 0;
+    const int number = 10;
+    for (int i = 0; i < number; i++)
+    {
+        stopwatch.Start();
+        action();
+        stopwatch.Stop();
+        ticks += stopwatch.ElapsedTicks;
+        stopwatch.Reset();
+    }
+
+    ticks /= number;
+    Console.WriteLine($"{name}:{count}-{TimeSpan.FromTicks(ticks)}");
+}
+
 
 void CountThreadElements(uint count)
 {
     var degree = 5u;
     var data = GenerateList(count);
-    var stopwatch = new Stopwatch();
-    stopwatch.Start();
-    SumSimple(data);
-    stopwatch.Stop();
-    Console.WriteLine($"Simple:{count}-{stopwatch.Elapsed}");
-    stopwatch.Reset();
-    stopwatch.Start();
-    var result = SumThreadList(data, degree);
-    stopwatch.Stop();
-    stopwatch.Reset();
-    Console.WriteLine($"Thread:{count}-{stopwatch.Elapsed}");
-    stopwatch.Start();
-    var result2 = SumWithLinq(data,degree);
-    stopwatch.Stop();
-    Console.WriteLine($"Linq:{count}-{stopwatch.Elapsed}");
+    
+    CheckTime(count, () => SumSimple(data), "Simple");
+    CheckTime(count, () => SumThreadList(data, degree), "Thread");
+    CheckTime(count, () => SumWithLinq(data,degree), "Linq");
 }
 
 Console.WriteLine($"OS-{Environment.OSVersion}");
 Console.WriteLine($"Processors-{Environment.ProcessorCount}");
+CountThreadElements(100_000);
 CountThreadElements(1_000_000);
 CountThreadElements(10_000_000);
-CountThreadElements(100_000_000);
+
