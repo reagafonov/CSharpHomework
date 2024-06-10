@@ -1,18 +1,21 @@
 namespace Prototype;
 
-public class FourthSubClass:FirstBaseClass,IEquatable<FourthSubClass>
+/// <summary>
+/// Вложенный 1 раз класс от первого класса
+/// </summary>
+public class FourthFirstSubClass:FirstBaseClass,IEquatable<FourthFirstSubClass>,ICloneable,IMyClonable<FourthFirstSubClass>
 {
-    public FourthSubClass()
+    public FourthFirstSubClass()
     {}
 
-    public FourthSubClass(FourthSubClass fourthSubClass)
+    public FourthFirstSubClass(FourthFirstSubClass fourthSubClass)
         : base(fourthSubClass)
     {
         SomeProp = fourthSubClass.SomeProp;
     }
     public string SomeProp { get; set; }
 
-    public bool Equals(FourthSubClass? other)
+    public bool Equals(FourthFirstSubClass? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -24,11 +27,21 @@ public class FourthSubClass:FirstBaseClass,IEquatable<FourthSubClass>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((FourthSubClass)obj);
+        return Equals((FourthFirstSubClass)obj);
     }
 
     public override int GetHashCode()
     {
         return HashCode.Combine(base.GetHashCode(), SomeProp);
+    }
+    
+    public override FourthFirstSubClass MyClone()
+    {
+        return new FourthFirstSubClass(this);
+    }
+
+    object ICloneable.Clone()
+    {
+        return MyClone();
     }
 }

@@ -1,15 +1,19 @@
+using System.Reflection.Metadata.Ecma335;
+
 namespace Prototype;
 
 /// <summary>
 /// Первый подкласс для демонстрации шаблона "Прототип"
+/// Дважды вложенный класс
 /// </summary>
-public class FirstSubClass:FirstBaseClass,IEquatable<FirstSubClass>
+public class FirstFirstSubClass:FirstBaseClass,IEquatable<FirstFirstSubClass>,
+    ICloneable,IMyClonable<FirstFirstSubClass>
 {
-    public FirstSubClass()
+    public FirstFirstSubClass()
     {
     }
 
-    public FirstSubClass(FirstSubClass subclass)
+    public FirstFirstSubClass(FirstFirstSubClass subclass)
         :base(subclass)
     {
         FloatProp = subclass.FloatProp;
@@ -20,7 +24,7 @@ public class FirstSubClass:FirstBaseClass,IEquatable<FirstSubClass>
     /// </summary>
     public float FloatProp { get; set; }
 
-    public bool Equals(FirstSubClass? other)
+    public bool Equals(FirstFirstSubClass? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -32,11 +36,22 @@ public class FirstSubClass:FirstBaseClass,IEquatable<FirstSubClass>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((FirstSubClass)obj);
+        if (!FloatProp.Equals(((FirstFirstSubClass)obj).FloatProp)) return false;
+        return base.Equals(obj); 
     }
 
     public override int GetHashCode()
     {
         return HashCode.Combine(base.GetHashCode(), FloatProp);
+    }
+    
+    public override FirstFirstSubClass MyClone()
+    {
+        return new FirstFirstSubClass(this);
+    }
+
+    object ICloneable.Clone()
+    {
+        return new FirstFirstSubClass(this);
     }
 }

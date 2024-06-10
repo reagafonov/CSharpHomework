@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/romanagafonov/RiderProjects/1/CSharpHomework/DZ7/Multithread/Multithread/Multithread/Multithread.csproj",
-      "projectName": "Multithread",
-      "projectPath": "/Users/romanagafonov/RiderProjects/1/CSharpHomework/DZ7/Multithread/Multithread/Multithread/Multithread.csproj",
+      "projectUniqueName": "/Users/romanagafonov/RiderProjects/1/CSharpHomework/DZ8/Prototype/ConsoleApp1/Prototype/Prototype.csproj",
+      "projectName": "Prototype",
+      "projectPath": "/Users/romanagafonov/RiderProjects/1/CSharpHomework/DZ8/Prototype/ConsoleApp1/Prototype/Prototype.csproj",
       "packagesPath": "/Users/romanagafonov/.nuget/packages/",
-      "outputPath": "/Users/romanagafonov/RiderProjects/1/CSharpHomework/DZ7/Multithread/Multithread/Multithread/obj/",
+      "outputPath": "/Users/romanagafonov/RiderProjects/1/CSharpHomework/DZ8/Prototype/ConsoleApp1/Prototype/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/romanagafonov/.nuget/NuGet/NuGet.Config"

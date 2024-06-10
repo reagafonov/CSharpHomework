@@ -3,7 +3,7 @@ namespace Prototype;
 /// <summary>
 /// Второй базовый класс
 /// </summary>
-public class SecondBaseClass:IEquatable<SecondBaseClass>
+public class SecondBaseClass:IEquatable<SecondBaseClass>,ICloneable,IMyClonable<SecondBaseClass>
 {
     public SecondBaseClass()
     {
@@ -37,5 +37,15 @@ public class SecondBaseClass:IEquatable<SecondBaseClass>
     public override int GetHashCode()
     {
         return IntProp;
+    }
+    
+    public virtual SecondBaseClass MyClone()
+    {
+        return new SecondBaseClass(this);
+    }
+
+    object ICloneable.Clone()
+    {
+        return MyClone();
     }
 }

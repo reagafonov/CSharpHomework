@@ -3,7 +3,7 @@ namespace Prototype;
 /// <summary>
 /// Базовый класс для демонстрации шаблона "Прототип"
 /// </summary>
-public class FirstBaseClass:IEquatable<FirstBaseClass>
+public class FirstBaseClass:IEquatable<FirstBaseClass>,ICloneable,IMyClonable<FirstBaseClass>
 {
     public FirstBaseClass()
     {
@@ -49,5 +49,15 @@ public class FirstBaseClass:IEquatable<FirstBaseClass>
     public override int GetHashCode()
     {
         return HashCode.Combine(Data, DataDateTime);
+    }
+    
+    public virtual FirstBaseClass MyClone()
+    {
+        return new FirstBaseClass(this);
+    }
+
+    object ICloneable.Clone()
+    {
+        return MyClone();
     }
 }

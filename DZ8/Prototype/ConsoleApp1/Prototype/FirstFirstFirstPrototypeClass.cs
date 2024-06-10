@@ -2,32 +2,33 @@ namespace Prototype;
 
 /// <summary>
 /// Первый класс
+/// Наследуется от базового
 /// </summary>
-public class FirstPrototypeClass:FirstSubClass, IMyClonable<FirstPrototypeClass>,
-    ICloneable,IEquatable<FirstPrototypeClass>
+public class FirstFirstFirstPrototypeClass:FirstFirstSubClass, IMyClonable<FirstFirstFirstPrototypeClass>,
+    ICloneable,IEquatable<FirstFirstFirstPrototypeClass>
 {
-    public FirstPrototypeClass()
+    public FirstFirstFirstPrototypeClass()
     {
         
     }
 
-    public FirstPrototypeClass(FirstPrototypeClass prototype)
+    public FirstFirstFirstPrototypeClass(FirstFirstFirstPrototypeClass prototype)
         :base(prototype)
     {
-        PrototypeDateTime = prototype.DataDateTime;
+        PrototypeDateTime = prototype.PrototypeDateTime;
     }
     public DateTime PrototypeDateTime { get; set; }
-    public FirstPrototypeClass Clone()
+    public override FirstFirstFirstPrototypeClass MyClone()
     {
-        return new FirstPrototypeClass(this);
+        return new FirstFirstFirstPrototypeClass(this);
     }
 
     object ICloneable.Clone()
     {
-        return Clone();
+        return MyClone();
     }
 
-    public bool Equals(FirstPrototypeClass? other)
+    public bool Equals(FirstFirstFirstPrototypeClass? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -39,11 +40,13 @@ public class FirstPrototypeClass:FirstSubClass, IMyClonable<FirstPrototypeClass>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((FirstPrototypeClass)obj);
+        return base.Equals((FirstFirstFirstPrototypeClass)obj) && PrototypeDateTime == ((FirstFirstFirstPrototypeClass)obj).PrototypeDateTime;
     }
 
     public override int GetHashCode()
     {
         return HashCode.Combine(base.GetHashCode(), PrototypeDateTime);
     }
+    
+   
 }
