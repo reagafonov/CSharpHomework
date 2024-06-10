@@ -3,71 +3,12 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
-void SumParallel(int i, uint ucount, List<int> data, Barrier barrier)
-{
-    var count = (int)ucount;
-    if (barrier == null)
-        throw new NullReferenceException(nameof(barrier));
-    var dataLengh = data.Count;
 
-    while (dataLengh > 1)
-    {
-        var isLast = count == i;
-        int result=0;
-        if (i <= count)
-        {
-            var currentLength = dataLengh / count;
-
-            var min = i * count;
-            var max = isLast ? dataLengh : (i + 1) * currentLength - 1;
-            result = data.Skip(min).Take(max - min).Sum();
-        }
-
-        barrier.SignalAndWait();
-        if (i <= count)
-        {
-            data[i] = result;
-            if (i == 0)
-            {
-                if (dataLengh % 2 == 1)
-                    data[dataLengh - 1] += data[dataLengh - 2];
-                dataLengh /= 2;
-                count /= 2;
-                count = Math.Max(count, 1);
-            }
-        }
-
-        barrier.SignalAndWait();
-    }
-}
-
-int Sum(List<int> list, uint count)
-{
-    var resultList = list.ToList();
-    int i = 0;
-    var barrier = new Barrier((int)count);
-    var j = 0;
-    var threads = Enumerable.Range(0,(int)count-1)
-        .Select(x => new Thread(() => SumParallel(j++,count,resultList, barrier)))
-        .ToList();
-    foreach (var thread in threads)
-    {
-        thread.Start();
-    }
-
-    foreach (var thread in threads)
-    {
-        thread.Join();
-    }
-
-    return resultList.First();
-}
-
-double SumThreadList(List<double> list, uint count)
+double SumThreadList(List<double> list, uint degree)
 {
     var i = 0;
     var concurrentBag = new ConcurrentBag<double>();
-    var groups = list.GroupBy(x => i++ % count).Select(x=>x.ToList()).ToList();
+    var groups = list.GroupBy(x => i++ % degree).Select(x=>x.ToList()).ToList();
     var tasks = groups.Select(x => new Thread(() => concurrentBag.Add(x.Sum()))).ToList();
     foreach (var task in tasks)
     {
@@ -93,9 +34,9 @@ List<double> GenerateList(uint count)
 }
 
 
-double SumWithLinq(List<double> data, uint count)
+double SumWithLinq(List<double> data, uint degree)
 {
-    return data.AsParallel().Sum();
+    return data.AsParallel().WithDegreeOfParallelism((int)degree).Sum();
 }
 
 double SumSimple(List<double> data)
